@@ -1,0 +1,125 @@
+parameters 1/1, run 1/1
+RPL PROTOCOL STARTED
+RPL PROTOCOL STARTED
+   slotframe_iteration: 0/999
+   slotframe_iteration: 1/999
+   slotframe_iteration: 2/999
+   slotframe_iteration: 3/999
+   slotframe_iteration: 4/999
+   slotframe_iteration: 5/999
+   slotframe_iteration: 6/999
+   slotframe_iteration: 7/999
+   slotframe_iteration: 8/999
+   slotframe_iteration: 9/999
+   slotframe_iteration: 10/999
+SENDING DIO...
+CREATING DIO....
+Rank is : 256
+Etx is 3
+NEW DIO CREATED::
+{'app': {'dodagId': 'fd00::1:0', 'options': {'mcs': {'etx': 3, 'type': 'OPT_ETX'}, 'type': 'OPT'}, 'rank': 256}, 'type': 'DIO', 'net': {'srcIp': 'fe80::1:0', 'packet_length': 76, 'dstIp': 'ff02::1a'}}
+   slotframe_iteration: 11/999
+   slotframe_iteration: 12/999
+   slotframe_iteration: 13/999
+   slotframe_iteration: 14/999
+   slotframe_iteration: 15/999
+   slotframe_iteration: 16/999
+   slotframe_iteration: 17/999
+   slotframe_iteration: 18/999
+   slotframe_iteration: 19/999
+   slotframe_iteration: 20/999
+   slotframe_iteration: 21/999
+   slotframe_iteration: 22/999
+   slotframe_iteration: 23/999
+   slotframe_iteration: 24/999
+   slotframe_iteration: 25/999
+   slotframe_iteration: 26/999
+   slotframe_iteration: 27/999
+   slotframe_iteration: 28/999
+   slotframe_iteration: 29/999
+   slotframe_iteration: 30/999
+   slotframe_iteration: 31/999
+   slotframe_iteration: 32/999
+   slotframe_iteration: 33/999
+   slotframe_iteration: 34/999
+   slotframe_iteration: 35/999
+   slotframe_iteration: 36/999
+   slotframe_iteration: 37/999
+   slotframe_iteration: 38/999
+   slotframe_iteration: 39/999
+   slotframe_iteration: 40/999
+   slotframe_iteration: 41/999
+   slotframe_iteration: 42/999
+   slotframe_iteration: 43/999
+   slotframe_iteration: 44/999
+   slotframe_iteration: 45/999
+SENDING DIO...
+CREATING DIO....
+Rank is : 256
+Etx is 3
+NEW DIO CREATED::
+{'app': {'dodagId': 'fd00::1:0', 'options': {'mcs': {'etx': 3, 'type': 'OPT_ETX'}, 'type': 'OPT'}, 'rank': 256}, 'type': 'DIO', 'net': {'srcIp': 'fe80::1:0', 'packet_length': 76, 'dstIp': 'ff02::1a'}}
+   slotframe_iteration: 46/999
+   slotframe_iteration: 47/999
+   slotframe_iteration: 48/999
+   slotframe_iteration: 49/999
+   slotframe_iteration: 50/999
+   slotframe_iteration: 51/999
+   slotframe_iteration: 52/999
+   slotframe_iteration: 53/999
+   slotframe_iteration: 54/999
+   slotframe_iteration: 55/999
+   slotframe_iteration: 56/999
+   slotframe_iteration: 57/999
+   slotframe_iteration: 58/999
+   slotframe_iteration: 59/999
+   slotframe_iteration: 60/999
+   slotframe_iteration: 61/999
+   slotframe_iteration: 62/999
+   slotframe_iteration: 63/999
+   slotframe_iteration: 64/999
+   slotframe_iteration: 65/999
+   slotframe_iteration: 66/999
+   slotframe_iteration: 67/999
+   slotframe_iteration: 68/999
+   slotframe_iteration: 69/999
+   slotframe_iteration: 70/999
+   slotframe_iteration: 71/999
+   slotframe_iteration: 72/999
+   slotframe_iteration: 73/999
+   slotframe_iteration: 74/999
+   slotframe_iteration: 75/999
+   slotframe_iteration: 76/999
+   slotframe_iteration: 77/999
+   slotframe_iteration: 78/999
+   slotframe_iteration: 79/999
+   slotframe_iteration: 80/999
+   slotframe_iteration: 81/999
+   slotframe_iteration: 82/999
+   slotframe_iteration: 83/999
+   slotframe_iteration: 84/999
+   slotframe_iteration: 85/999
+   slotframe_iteration: 86/999
+   slotframe_iteration: 87/999
+   slotframe_iteration: 88/999
+   slotframe_iteration: 89/999
+   slotframe_iteration: 90/999
+   slotframe_iteration: 91/999
+   slotframe_iteration: 92/999
+   slotframe_iteration: 93/999
+   slotframe_iteration: 94/999
+   slotframe_iteration: 95/999
+   slotframe_iteration: 96/999
+   slotframe_iteration: 97/999
+   slotframe_iteration: 98/999
+   slotframe_iteration: 99/999
+SENDING DIO...
+CREATING DIO....
+Rank is : 256
+Etx is 3
+NEW DIO CREATED::
+{'app': {'dodagId': 'fd00::1:0', 'options': {'mcs': {'etx': 3, 'type': 'OPT_ETX'}, 'type': 'OPT'}, 'rank': 256}, 'type': 'DIO', 'net': {'srcIp': 'fe80::1:0', 'packet_length': 76, 'dstIp': 'ff02::1a'}}
+   slotframe_iteration: 100/999
+   slotframe_iteration: 101/999
+   slotframe_iteration: 102/999
+   slotframe_iteration
