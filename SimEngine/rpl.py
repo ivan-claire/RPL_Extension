@@ -524,7 +524,8 @@ class Rpl(object):
             new_parent = None
         elif self.rank is None:
             new_parent = candidate
-            self.rank = new_rank
+            #self.rank = new_rank
+            self.rank = 100000000000000
         else:
             # (new_rank is not None) and (self.rank is None)
             rank_difference = self.rank - new_rank
@@ -543,7 +544,8 @@ class Rpl(object):
             if rank_difference is not None:
                 if d.RPL_PARENT_SWITCH_RANK_THRESHOLD < rank_difference:
                     new_parent = candidate
-                    self.rank = new_rank
+                    #self.rank = new_rank
+                    self.rank = 100000000000000
                 else:
                     # no change on preferred parent
                     new_parent = self.preferred_parent
@@ -778,7 +780,9 @@ class RplOF0(object):
             neighbor['rank_increase'] = step_of_rank * d.RPL_MINHOPRANKINCREASE
 
         if neighbor == self.preferred_parent:
-            self.rank = self._calculate_rank(self.preferred_parent)
+            #self.rank = self._calculate_rank(self.preferred_parent)
+            self.rank = 1000000000000000
+
 
     def _calculate_rank(self, neighbor):
         if (

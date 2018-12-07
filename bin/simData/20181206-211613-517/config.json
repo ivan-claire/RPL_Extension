@@ -41,11 +41,11 @@
 
             "charge_log_period_s":                         10,
 
-            "conn_class":                                  "FullyMeshed",
+            "conn_class":                                  "Linear",
             "conn_trace":                                  null,
 
             "conn_random_square_side":                     2.000,
-            "conn_random_init_min_pdr":                    1,
+            "conn_random_init_min_pdr":                    0.5,
             "conn_random_init_min_neighbors":              3,
 
             "phy_numChans":                                16

@@ -136,7 +136,11 @@ class SchedulingFunctionMSF(SchedulingFunctionBase):
     def start(self):
         # enable the pending bit feature
         self.mote.tsch.enable_pending_bit()
+        print("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS")
 
+        print("STARTING MSF SCHEDULING.........................................")
+
+        print("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS")
         # install SlotFrame 1 which has the same length as SlotFrame 0
         slotframe_0 = self.mote.tsch.get_slotframe(0)
         self.mote.tsch.add_slotframe(
@@ -161,7 +165,12 @@ class SchedulingFunctionMSF(SchedulingFunctionBase):
     def stop(self):
         # uninstall SlotFrame 1 instead of removing all the cells there
         self.mote.tsch.delete_slotframe(self.SLOTFRAME_HANDLE)
+        print("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS")
 
+        print("STOPPING MSF SCHEDULING.........................................")
+
+        print("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS")
+        # install SlotFrame 1 which has the same length as SlotFrame 0
         if self.mote.dagRoot:
             # do nothing
             pass
