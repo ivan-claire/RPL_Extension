@@ -22,6 +22,7 @@ import matplotlib.pyplot as plt
 import json
 import io
 import re
+import numpy as np
 import operator
 from functools import reduce
 # ============================ defines ========================================
@@ -199,18 +200,20 @@ def  save_pdrs(data,subfolder):
             data.append(map(float, val))
 
         avg_pdr_per_mote = []
+        num_motes = 0
+        mote_names = []
         for each_list in data:
             avg_pdr_per_mote.append(sum(each_list) / float(len(each_list)))
+            num_motes += 1
+            mote_names.append("mote"+str(num_motes))
 
         print("DATAA::: " + str(avg_pdr_per_mote))
-        fig, (ax) = plt.subplots(ncols=2)
-        ax.boxplot(avg_pdr_per_mote)
-        ax.set_xticklabels(index)
-        #ax2.violinplot(avg_pdr_per_mote)
-        #ax2.set_xticks(range(1, len(index) + 1))
-        #ax2.set_xticklabels(index)
-        #plt.show()
-        savefig(subfolder, "AVERAGE PDR")
+
+        x = np.arange(num_motes)
+        plt.bar(x, height= avg_pdr_per_mote, width = 1.0, edgecolor = 'black')
+        plt.xticks(x, mote_names)
+
+        savefig(subfolder, "PDR PER MOTE SINGLE OR MULTI SIMULATIONS")
         plt.clf()
 
 
