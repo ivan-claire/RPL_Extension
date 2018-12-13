@@ -51,6 +51,7 @@ def init_mote():
         'charge_asn': None,
         'upstream_pkts': {},
         'latencies': [],
+        #'pdrs': [],
         'hops': [],
         'charge': None,
         'packet_drops': {},
@@ -210,13 +211,18 @@ def kpis_all(inputfile):
                             thislatency = (pktstats['rx_asn']-pktstats['tx_asn'])*file_settings['tsch_slotDuration']
                             motestats['latencies']  += [thislatency]
                             motestats['hops']       += [pktstats['hops']]
+                            #thispdr = motestats['upstream_num_rx'] / float(motestats['upstream_num_tx'])
+                            #motestats['pdrs'] += [thispdr]
+
                         else:
                             motestats['upstream_num_lost'] += 1
+                    if motestats['upstream_num_tx'] > 0:
+                        motestats['upstream_reliability'] = motestats['upstream_num_rx']/float(motestats['upstream_num_tx'])
+
                     if (motestats['upstream_num_rx'] > 0) and (motestats['upstream_num_tx'] > 0):
                         motestats['latency_min_s'] = min(motestats['latencies'])
                         motestats['latency_avg_s'] = sum(motestats['latencies'])/float(len(motestats['latencies']))
                         motestats['latency_max_s'] = max(motestats['latencies'])
-                        motestats['upstream_reliability'] = motestats['upstream_num_rx']/float(motestats['upstream_num_tx'])
                         motestats['avg_hops'] = sum(motestats['hops'])/float(len(motestats['hops']))
 
     # === network stats
@@ -229,6 +235,7 @@ def kpis_all(inputfile):
         app_packets_lost = 0
         joining_times = []
         us_latencies = []
+        #us_pdrs = []
         current_consumed = []
         lifetimes = []
         slot_duration = file_settings['tsch_slotDuration']
@@ -253,6 +260,10 @@ def kpis_all(inputfile):
             # latency
 
             us_latencies += motestats['latencies']
+
+            # pdr
+
+            #us_pdrs += motestats['pdrs']
 
             # current consumed
 

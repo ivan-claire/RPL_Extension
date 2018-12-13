@@ -716,9 +716,11 @@ class Tsch(object):
                         ):
                             _packet_to_send['backoff_remaining_delay'] -= 1
                             # skip this cell for transmission
+                            print("................PACKET TO SEND AND TURNING ON SHARED CELL................................")
                         else:
                             packet_to_send = _packet_to_send
                             active_cell = cell
+                            print("................PACKET TO SEND AND TURNING WITH NO SHARED CELL................................")
 
             if (
                     cell.is_rx_on()

@@ -613,8 +613,11 @@ class RplOF0(object):
             neighbor['numTx'] += 1
             print("NUMBER OF TRANSMISSIONS : "+str(neighbor['numTx']))
             if isACKed is True:
+                print("ACKED")
                 neighbor['numTxAck'] += 1
                 print("NUMBER OF TRANSMISSIONS : " + str(neighbor['numTxAck']))
+            else:
+                print("Not ACKED")
             self._update_neighbor_rank_increase(neighbor)
             self._update_preferred_parent()
             print("stopping to update etxxxssssssssss")

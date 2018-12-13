@@ -596,6 +596,7 @@ class RplMrHof(Rpl):
         mac_addr = dio['mac']['srcMac']
         rank = dio['app']['rank']
         etx = dio['app']['options']['mcs']['etx'] #READING ETX VALUE OF NEIGHBOUR FROM DIO
+
         print("UPDATING NEIGHBOR'S RANK INFO..."+str(rank))
         # checking if node contains neighbour and if not add neighbour
         neighbor = self._find_neighbor(mac_addr)
@@ -637,7 +638,8 @@ class RplMrHof(Rpl):
                 and
                 (d.CELLOPTION_TX in cell.options)
                 and
-                (d.CELLOPTION_SHARED not in cell.options)
+                (d.CELLOPTION_SHARED in cell.options)
+                #(d.CELLOPTION_SHARED not in cell.options)
             ):
             neighbor['numTx'] += 1
             if isACKed is True:
@@ -959,6 +961,7 @@ class RplOF0(object):
                 (d.CELLOPTION_TX in cell.options)
                 and
                 (d.CELLOPTION_SHARED not in cell.options)
+                #(d.CELLOPTION_SHARED not in cell.options)
             ):
             neighbor['numTx'] += 1
             if isACKed is True:
