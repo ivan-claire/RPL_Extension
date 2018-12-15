@@ -494,7 +494,7 @@ class ConnectivityK7(ConnectivityBase):
             for line in trace:
                 # parse line
                 row = self._parse_line(csv_header, line)
-
+                print("ROWWWWW"+str(row))
                 # only read first transaction
                 if row['transaction_id'] > 0:
                     break
@@ -504,12 +504,23 @@ class ConnectivityK7(ConnectivityBase):
 
                 # update matrix value
                 first_channel = trace_header['channels'][0]
+                print("CHANNELS: " + str(row['channels']))
                 for channel in row['channels']:
                     channel_offset = channel - first_channel
-                    self.connectivity_matrix[row['src']][row['dst']][channel_offset] = {
-                        'pdr': float(row['pdr']),
-                        'rssi': row['mean_rssi'],
-                    }
+                    #channel_offset = 2
+                    #print("CHANNEL OFFSET: " + str(channel_offset))
+                    rssi_value = row['mean_rssi']
+                    pdr_value = float(row['pdr'])
+                    #print("ROWWWWW value:: " + str(self.connectivity_matrix['0']['40'][1]))
+                    try:
+                        self.connectivity_matrix[row['src']][row['dst']][channel_offset] = {
+                            'pdr': pdr_value,
+                            'rssi': rssi_value,
+                        }
+
+                    except KeyError:
+
+                        print("KEY DOESN'T EXIST!")
 
                 # save matrix timestamp
                 self.connectivity_matrix_timestamp = row['asn']

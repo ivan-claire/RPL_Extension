@@ -6,10 +6,10 @@
     },
     "settings": {
         "combination": {
-            "exec_numMotes":                               [10]
+            "exec_numMotes":                               [20]
         },
         "regular": {
-            "exec_numSlotframesPerRun":                    1000,
+            "exec_numSlotframesPerRun":                    15000,
             "exec_randomSeed":                             101,
 
             "secjoin_enabled":                             true,

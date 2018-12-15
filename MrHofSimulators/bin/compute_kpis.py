@@ -212,11 +212,16 @@ def kpis_all(inputfile):
                             motestats['hops']       += [pktstats['hops']]
                         else:
                             motestats['upstream_num_lost'] += 1
+
+                    if motestats['upstream_num_tx'] > 0:
+                        motestats['upstream_reliability'] = motestats['upstream_num_rx']/float(motestats['upstream_num_tx'])
+                    else:
+                        motestats['upstream_reliability'] = 0
+
                     if (motestats['upstream_num_rx'] > 0) and (motestats['upstream_num_tx'] > 0):
                         motestats['latency_min_s'] = min(motestats['latencies'])
                         motestats['latency_avg_s'] = sum(motestats['latencies'])/float(len(motestats['latencies']))
                         motestats['latency_max_s'] = max(motestats['latencies'])
-                        motestats['upstream_reliability'] = motestats['upstream_num_rx']/float(motestats['upstream_num_tx'])
                         motestats['avg_hops'] = sum(motestats['hops'])/float(len(motestats['hops']))
 
     # === network stats

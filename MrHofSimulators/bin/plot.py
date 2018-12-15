@@ -23,8 +23,7 @@ import json
 import io
 import re
 import numpy as np
-import operator
-from functools import reduce
+import collections
 # ============================ defines ========================================
 
 KPIS = [
@@ -87,6 +86,7 @@ def main(options):
                     #save data in another file mote 0,1,2,3
                     print("KEYYY" + str(key))
                     pdr_data = data.values()[0]
+                    #print("pppppppddddddddddddddrrrrrrrrrrrrrrrrrrrrrrrr:: " + str(pdr_data))
                     print("pppppppddddddddddddddrrrrrrrrrrrrrrrrrrrrrrrr:: " + str(data))
                     save_pdrs(pdr_data,subfolder)
                     #plot_box(datas, key, subfolder)
@@ -129,9 +129,8 @@ def  save_pdrs(data,subfolder):
     mote_counter = 1
     print("OS PATH::: "+str(os.path.isfile("./pdrs.json")))
     json_string =  '''{"simulations": []}'''
-    json_begin = '{"simulations":['
-    json_end = ']}'
     outer_list = []
+    print("ALL SIMULATIONS::: " + str( data ))
 
     if os.path.isfile("./pdrs.json") == False:
         with io.open("pdrs.json", 'w', encoding='utf-8') as feedsjson:
@@ -139,18 +138,11 @@ def  save_pdrs(data,subfolder):
             json_dict = json.loads(json_string)
             print("json dict::: " + str(json_dict))
             for pdr in data:
-                #json_dict['simulations'].append({'mote_id': mote_counter, 'pdr': pdr})
-                #json_dict['simulations'].append({'mote_id': mote_counter, 'pdr': pdr})
                 json_dict['simulations'].append({'mote_id_'+str(mote_counter): pdr})
                 mote_counter += 1
             outer_list.append(json_dict)
             feedsjson.write(json.dumps(json_dict, ensure_ascii=False))
-            #feedsjson.write(json.dumps(json_dict, indent=4, sort_keys=True,
-              #                         separators=(',', ': '), ensure_ascii=False))
     else:
-        #with io.open("pdrs.json", 'a', encoding='utf-8') as commas:
-
-             #commas.write(unicode(','))
         with io.open("pdrs.json", 'a', encoding='utf-8') as feedsjson:
             feedsjson.write(unicode(','))
              # convert it to a python dictionary
@@ -190,7 +182,10 @@ def  save_pdrs(data,subfolder):
         }
 
         final_pdrs = {k: filter(bool, v) for k, v in final_pdrs.iteritems()}
-        print("ALL SIMULATIONS::: " + str(final_pdrs))
+
+        #final_pdrs =  collections.OrderedDict(sorted(final_pdrs.items()))
+            #sorted(final_pdrs.iterkeys())
+        print("SORTED PDR LIST::: " + str(final_pdrs))
 
         #plotting results
         index = []
@@ -198,23 +193,37 @@ def  save_pdrs(data,subfolder):
         for i, (key, val) in enumerate(final_pdrs.iteritems()):
             index.append(key)
             data.append(map(float, val))
-
+        print("DATAAAA FOR CALCULATING AVG MOTE::: " + str(data))
         avg_pdr_per_mote = []
         num_motes = 0
         mote_names = []
+        all_motes = []
+        std = []
+
         for each_list in data:
-            avg_pdr_per_mote.append(sum(each_list) / float(len(each_list)))
+            #avg_pdr_per_mote.append(sum(each_list) / float(len(each_list)))
+            avg_pdr_per_mote.append(np.mean(each_list))
             num_motes += 1
             mote_names.append("mote"+str(num_motes))
+            #to get his for each simulation, make sure the pdr.json file doesn't exist
+            #means.append(np.mean(each_list))
+            all_motes.append(each_list)
+            std.append(np.std(each_list))
 
         print("DATAA::: " + str(avg_pdr_per_mote))
-
         x = np.arange(num_motes)
         plt.bar(x, height= avg_pdr_per_mote, width = 1.0, edgecolor = 'black')
         plt.xticks(x, mote_names)
-
         savefig(subfolder, "PDR PER MOTE SINGLE OR MULTI SIMULATIONS")
         plt.clf()
+
+        # plotting mean of all motes in a simulation
+        #print("ALL MOTES DATA::: " + str(all_motes))
+        plt.boxplot(avg_pdr_per_mote, showmeans=True)
+        savefig(subfolder, "Means of all motes")
+        plt.clf()
+
+
 
 
 def savefig(output_folder, output_name, output_format="png"):
