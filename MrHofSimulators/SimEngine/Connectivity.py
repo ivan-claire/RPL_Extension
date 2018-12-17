@@ -54,6 +54,16 @@ class ConnectivityBase(object):
         'rssi': -1000
     }
 
+    CONNECTIVITY_MATRIX_LINK_QUALITY = {
+        'pdr' : 0.50,
+        'rssi' : -30
+    }
+
+    CONNECTIVITY_MATRIX_LINK_QUALITY_1 = {
+        'pdr': 0.3,
+        'rssi': -30
+    }
+
     # ===== start singleton
     _instance = None
     _init = False
@@ -456,12 +466,53 @@ class ConnectivityLinear(ConnectivityBase):
             if parent is not None:
                 for channel in range(self.settings.phy_numChans):
                     self.connectivity_matrix[mote.id][parent.id][channel] = copy.copy(
-                        self.CONNECTIVITY_MATRIX_PERFECT_LINK
+                        # self.CONNECTIVITY_MATRIX_PERFECT_LINK
+                        self.CONNECTIVITY_MATRIX_LINK_QUALITY
                     )
                     self.connectivity_matrix[parent.id][mote.id][channel] = copy.copy(
-                        self.CONNECTIVITY_MATRIX_PERFECT_LINK
+                        # self.CONNECTIVITY_MATRIX_PERFECT_LINK
+                        self.CONNECTIVITY_MATRIX_LINK_QUALITY
                     )
             parent = mote
+
+class ConnectivityStar(ConnectivityBase):
+    """
+    Node 0 is root, every other nodes connect to root
+    """
+    def _init_connectivity_matrix(self):
+        source = self.engine.motes[0]
+        for destination in self.engine.motes[1:] :
+            for channel in range(self.settings.phy_numChans):
+                self.connectivity_matrix[source.id][destination.id][channel] = copy.copy(
+                    self.CONNECTIVITY_MATRIX_LINK_QUALITY
+                )
+                self.connectivity_matrix[destination.id][source.id][channel] = copy.copy(
+                    self.CONNECTIVITY_MATRIX_LINK_QUALITY
+                )
+
+class ConnectivityTree(ConnectivityBase):
+    """
+    Node 0 is root, other nodes connect to each other as a tree topology
+    """
+    def _init_connectivity_matrix(self):
+        root = self.engine.motes[0]
+        tail = self.engine.motes[-1]
+        for destination in self.engine.motes[1:-1] :
+            for channel in range(self.settings.phy_numChans):
+                self.connectivity_matrix[root.id][destination.id][channel] = copy.copy(
+                    self.CONNECTIVITY_MATRIX_LINK_QUALITY
+                )
+                self.connectivity_matrix[destination.id][root.id][channel] = copy.copy(
+                    self.CONNECTIVITY_MATRIX_LINK_QUALITY
+                )
+                # Connect the tail node to the middle nodes
+                self.connectivity_matrix[tail.id][destination.id][channel] = copy.copy(
+                    self.CONNECTIVITY_MATRIX_LINK_QUALITY_1
+                )
+                self.connectivity_matrix[destination.id][tail.id][channel] = copy.copy(
+                    self.CONNECTIVITY_MATRIX_LINK_QUALITY_1
+                )
+
 
 class ConnectivityK7(ConnectivityBase):
     """

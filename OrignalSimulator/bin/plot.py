@@ -203,6 +203,8 @@ def  save_pdrs(data,subfolder):
         num_motes = 0
         mote_names = []
         for each_list in data:
+            mean = np.mean(np.fromiter(each_list))
+            std = np.std(np.fromiter(each_list))
             avg_pdr_per_mote.append(sum(each_list) / float(len(each_list)))
             num_motes += 1
             mote_names.append("mote"+str(num_motes))
