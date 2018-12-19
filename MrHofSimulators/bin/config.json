@@ -6,10 +6,10 @@
     },
     "settings": {
         "combination": {
-            "exec_numMotes":                               [10]
+            "exec_numMotes":                               [12]
         },
         "regular": {
-            "exec_numSlotframesPerRun":                    2000,
+            "exec_numSlotframesPerRun":                    3500,
             "exec_randomSeed":                             101,
 
             "secjoin_enabled":                             true,
@@ -41,8 +41,8 @@
 
             "charge_log_period_s":                         10,
 
-            "conn_class":                                  "Linear",
-            "conn_trace":                                  null,
+             "conn_class":                                  "TwoLevelTree",
+            "conn_trace":                                   "null",
 
             "conn_random_square_side":                     2.000,
             "conn_random_init_min_pdr":                    0.5,

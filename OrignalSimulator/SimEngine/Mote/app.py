@@ -183,8 +183,12 @@ class AppPeriodic(AppBase):
     #======================== public ==========================================
 
     def startSendingData(self):
-        if self.sending_first_packet:
-            self._schedule_transmission()
+        if self.mote.id >= 11:
+            if self.sending_first_packet:
+                self._schedule_transmission()
+
+        #if self.sending_first_packet:
+          #  self._schedule_transmission()
 
     #======================== public ==========================================
 

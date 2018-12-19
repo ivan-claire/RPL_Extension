@@ -51,7 +51,6 @@ def init_mote():
         'charge_asn': None,
         'upstream_pkts': {},
         'latencies': [],
-        #'pdrs': [],
         'hops': [],
         'charge': None,
         'packet_drops': {},
@@ -211,14 +210,12 @@ def kpis_all(inputfile):
                             thislatency = (pktstats['rx_asn']-pktstats['tx_asn'])*file_settings['tsch_slotDuration']
                             motestats['latencies']  += [thislatency]
                             motestats['hops']       += [pktstats['hops']]
-                            #thispdr = motestats['upstream_num_rx'] / float(motestats['upstream_num_tx'])
-                            #motestats['pdrs'] += [thispdr]
-
                         else:
                             motestats['upstream_num_lost'] += 1
+
                     if motestats['upstream_num_tx'] > 0:
                         motestats['upstream_reliability'] = motestats['upstream_num_rx']/float(motestats['upstream_num_tx'])
-                    else:
+                    elif motestats['upstream_num_tx'] == 0:
                         motestats['upstream_reliability'] = 0
 
                     if (motestats['upstream_num_rx'] > 0) and (motestats['upstream_num_tx'] > 0):
@@ -226,6 +223,8 @@ def kpis_all(inputfile):
                         motestats['latency_avg_s'] = sum(motestats['latencies'])/float(len(motestats['latencies']))
                         motestats['latency_max_s'] = max(motestats['latencies'])
                         motestats['avg_hops'] = sum(motestats['hops'])/float(len(motestats['hops']))
+                else:
+                    motestats['upstream_reliability'] = 0
 
     # === network stats
     for (run_id, per_mote_stats) in allstats.items():
@@ -237,7 +236,6 @@ def kpis_all(inputfile):
         app_packets_lost = 0
         joining_times = []
         us_latencies = []
-        #us_pdrs = []
         current_consumed = []
         lifetimes = []
         slot_duration = file_settings['tsch_slotDuration']
@@ -263,10 +261,6 @@ def kpis_all(inputfile):
 
             us_latencies += motestats['latencies']
 
-            # pdr
-
-            #us_pdrs += motestats['pdrs']
-
             # current consumed
 
             current_consumed.append(motestats['charge'])
@@ -280,12 +274,12 @@ def kpis_all(inputfile):
                 {
                     'name': 'E2E Upstream Delivery Ratio',
                     'unit': '%',
-                    'value': 1 - app_packets_lost / app_packets_sent
+                    'value': 1 - app_packets_lost / app_packets_sent if app_packets_sent > 0 else 0
                 },
                 {
                     'name': 'E2E Upstream Loss Rate',
                     'unit': '%',
-                    'value':  app_packets_lost / app_packets_sent
+                    'value': app_packets_lost / app_packets_sent if app_packets_sent > 0 else 0
                 }
             ],
             'e2e-upstream-latency': [
@@ -293,17 +287,17 @@ def kpis_all(inputfile):
                     'name': 'E2E Upstream Latency',
                     'unit': 's',
                     'mean': mean(us_latencies),
-                    'min': min(us_latencies),
-                    'max': max(us_latencies),
-                    '99%': np.percentile(us_latencies, 99)
+                    'min': min(us_latencies) if us_latencies != []  else 0,
+                    'max': max(us_latencies) if us_latencies != []  else 0,
+                    '99%': np.percentile(us_latencies, 99) if us_latencies != []  else 0
                 },
                 {
                     'name': 'E2E Upstream Latency',
                     'unit': 'slots',
                     'mean': mean(us_latencies) / slot_duration,
-                    'min': min(us_latencies) / slot_duration,
-                    'max': max(us_latencies) / slot_duration,
-                    '99%': np.percentile(us_latencies, 99) / slot_duration
+                    'min': min(us_latencies) / slot_duration if us_latencies != []  else 0,
+                    'max': max(us_latencies) / slot_duration if us_latencies != []  else 0,
+                    '99%': np.percentile(us_latencies, 99) / slot_duration if us_latencies != []  else 0
                 }
             ],
             'current-consumed': [

@@ -184,13 +184,20 @@ class AppPeriodic(AppBase):
 
     def startSendingData(self):
         print("Slotframes:", self.mote.tsch.slotframes)
-        if self.sending_first_packet:
-            self._schedule_transmission()
+        print("TRANSMITTING ONLY WHEN MOTE ID IS 11: "+str(self.mote.id))
+        if self.mote.id >= 11:
+            print("BEGINNNNNNNNNNNNNNNNIIIINGGGGGGGGGGG TRANSMISSSSSSSSSIONNNNNNN WITH ID:::::: " + str(self.mote.id))
+            if self.sending_first_packet:
+                self._schedule_transmission()
+
+        #if self.sending_first_packet:
+         #   self._schedule_transmission()
 
     #======================== public ==========================================
 
     def _schedule_transmission(self):
         assert self.settings.app_pkPeriod >= 0
+        print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXSCHEDULING TRANSMISIIONNSSSSSSXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
         if self.settings.app_pkPeriod == 0:
             return
 

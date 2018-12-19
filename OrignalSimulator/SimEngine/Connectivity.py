@@ -54,6 +54,16 @@ class ConnectivityBase(object):
         'rssi': -1000
     }
 
+    CONNECTIVITY_MATRIX_LINK_QUALITY = {
+        'pdr' : 0.50,
+        'rssi' : -30
+    }
+
+    CONNECTIVITY_MATRIX_LINK_QUALITY_1 = {
+        'pdr': 0.3,
+        'rssi': -30
+    }
+
     # ===== start singleton
     _instance = None
     _init = False
@@ -456,12 +466,126 @@ class ConnectivityLinear(ConnectivityBase):
             if parent is not None:
                 for channel in range(self.settings.phy_numChans):
                     self.connectivity_matrix[mote.id][parent.id][channel] = copy.copy(
-                        self.CONNECTIVITY_MATRIX_PERFECT_LINK
+                        # self.CONNECTIVITY_MATRIX_PERFECT_LINK
+                        self.CONNECTIVITY_MATRIX_LINK_QUALITY
                     )
                     self.connectivity_matrix[parent.id][mote.id][channel] = copy.copy(
-                        self.CONNECTIVITY_MATRIX_PERFECT_LINK
+                        # self.CONNECTIVITY_MATRIX_PERFECT_LINK
+                        self.CONNECTIVITY_MATRIX_LINK_QUALITY
                     )
             parent = mote
+
+class ConnectivityStar(ConnectivityBase):
+    """
+    Node 0 is root, every other nodes connect to root
+    """
+    def _init_connectivity_matrix(self):
+        source = self.engine.motes[0]
+        for destination in self.engine.motes[1:] :
+            for channel in range(self.settings.phy_numChans):
+                self.connectivity_matrix[source.id][destination.id][channel] = copy.copy(
+                    self.CONNECTIVITY_MATRIX_LINK_QUALITY
+                )
+                self.connectivity_matrix[destination.id][source.id][channel] = copy.copy(
+                    self.CONNECTIVITY_MATRIX_LINK_QUALITY
+                )
+
+class ConnectivityTree(ConnectivityBase):
+    """
+    Node 0 is root, other nodes connect to each other as a tree topology
+    """
+    def _init_connectivity_matrix(self):
+        root = self.engine.motes[0]
+        tail = self.engine.motes[-1]
+        for destination in self.engine.motes[1:-1] :
+            for channel in range(self.settings.phy_numChans):
+                self.connectivity_matrix[root.id][destination.id][channel] = copy.copy(
+                    self.CONNECTIVITY_MATRIX_LINK_QUALITY
+                )
+                self.connectivity_matrix[destination.id][root.id][channel] = copy.copy(
+                    self.CONNECTIVITY_MATRIX_LINK_QUALITY
+                )
+                # Connect the tail node to the middle nodes
+                self.connectivity_matrix[tail.id][destination.id][channel] = copy.copy(
+                    self.CONNECTIVITY_MATRIX_LINK_QUALITY_1
+                )
+                self.connectivity_matrix[destination.id][tail.id][channel] = copy.copy(
+                    self.CONNECTIVITY_MATRIX_LINK_QUALITY_1
+                )
+
+class ConnectivityTwoLevelTree(ConnectivityBase):
+    """
+    Node 0 is root, other nodes connect to each other as a tree topology
+    """
+    def _init_connectivity_matrix(self):
+        root = self.engine.motes[0]
+        tail = self.engine.motes[-1]
+
+        relay_size = len(self.engine.motes[1:-1])
+        print("RELAY SIZE:: " + str(int(relay_size/2)))
+
+        first_relay = self.engine.motes[1:int(relay_size/2)+1]
+        second_relay = self.engine.motes[int(relay_size / 2)+1:-1]
+
+        #initializing counters
+        counter1 = 0
+        counter2 = 1
+        counter3 = 1
+        counter4 = 0
+
+        #print("FIRST RELAY TO CONNECT:: "+str(first_relay))
+        #print("SECOND RELAY TO CONNECT:: " + str(second_relay))
+
+        for first_relay_node in first_relay :
+            for channel in range(self.settings.phy_numChans):
+                # connecting the root to all relay 1 motes
+                self.connectivity_matrix[root.id][first_relay_node.id][channel] = copy.copy(
+                    self.CONNECTIVITY_MATRIX_LINK_QUALITY
+                )
+                self.connectivity_matrix[first_relay_node.id][root.id][channel] = copy.copy(
+                    self.CONNECTIVITY_MATRIX_LINK_QUALITY
+                )
+
+        for node in first_relay :
+            for channel in range(self.settings.phy_numChans):
+                # creating connection between relay 1 and relay 2 for odd and even numbers only
+                self.connectivity_matrix[first_relay[counter1].id][second_relay[counter2].id][channel] = copy.copy(
+                    self.CONNECTIVITY_MATRIX_LINK_QUALITY
+                )
+
+                self.connectivity_matrix[second_relay[counter2].id][first_relay[counter1].id][channel] = copy.copy(
+                    self.CONNECTIVITY_MATRIX_LINK_QUALITY
+                )
+                print("CONNECTING 1ST RELAY:: " + str(first_relay[counter1].id)+" =="+str(second_relay[counter2].id))
+                # creating the other connections ( e.g 2 to 6, 3 to 7
+                self.connectivity_matrix[first_relay[counter3].id][second_relay[counter4].id][channel] = copy.copy(
+                    self.CONNECTIVITY_MATRIX_LINK_QUALITY
+                )
+
+                self.connectivity_matrix[second_relay[counter4].id][first_relay[counter3].id][channel] = copy.copy(
+                    self.CONNECTIVITY_MATRIX_LINK_QUALITY
+                )
+                print(
+                    "CONNECTING 2ND RELAY:: " + str(first_relay[counter3].id) + " ==" + str(second_relay[counter4].id))
+
+            if(counter2 and counter3 >= int(relay_size/2)-1):
+                counter2 += 1
+                counter3 += 1
+                counter1 += 1
+                counter4 += 1
+
+
+        for second_relay_node in second_relay:
+            for channel in range(self.settings.phy_numChans):
+                # Connect the tail node to the second relay
+                self.connectivity_matrix[tail.id][second_relay_node.id][channel] = copy.copy(
+                    self.CONNECTIVITY_MATRIX_LINK_QUALITY_1
+                )
+                self.connectivity_matrix[second_relay_node.id][tail.id][channel] = copy.copy(
+                    self.CONNECTIVITY_MATRIX_LINK_QUALITY_1
+                )
+                print(
+                    "CONNECTING TAIL:: " + str(tail.id) + " ==" + str(second_relay_node.id))
 
 class ConnectivityK7(ConnectivityBase):
     """
@@ -494,7 +618,7 @@ class ConnectivityK7(ConnectivityBase):
             for line in trace:
                 # parse line
                 row = self._parse_line(csv_header, line)
-
+                print("ROWWWWW"+str(row))
                 # only read first transaction
                 if row['transaction_id'] > 0:
                     break
@@ -504,12 +628,23 @@ class ConnectivityK7(ConnectivityBase):
 
                 # update matrix value
                 first_channel = trace_header['channels'][0]
+                print("CHANNELS: " + str(row['channels']))
                 for channel in row['channels']:
                     channel_offset = channel - first_channel
-                    self.connectivity_matrix[row['src']][row['dst']][channel_offset] = {
-                        'pdr': float(row['pdr']),
-                        'rssi': row['mean_rssi'],
-                    }
+                    #channel_offset = 2
+                    #print("CHANNEL OFFSET: " + str(channel_offset))
+                    rssi_value = row['mean_rssi']
+                    pdr_value = float(row['pdr'])
+                    #print("ROWWWWW value:: " + str(self.connectivity_matrix['0']['40'][1]))
+                    try:
+                        self.connectivity_matrix[row['src']][row['dst']][channel_offset] = {
+                            'pdr': pdr_value,
+                            'rssi': rssi_value,
+                        }
+
+                    except KeyError:
+
+                        print("KEY DOESN'T EXIST!")
 
                 # save matrix timestamp
                 self.connectivity_matrix_timestamp = row['asn']

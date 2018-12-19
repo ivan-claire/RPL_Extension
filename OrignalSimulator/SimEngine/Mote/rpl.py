@@ -746,10 +746,15 @@ class RplOF0(object):
         if new_rank is None:
             # we don't have any available parent
             new_parent = None
-        elif self.rank is None:
+        else:
+            #self.rank is None:
             new_parent = candidate
             self.rank = new_rank
+        ''''
         else:
+            new_parent = candidate
+            self.rank = new_rank
+            
             # (new_rank is not None) and (self.rank is None)
             rank_difference = self.rank - new_rank
 
@@ -771,6 +776,7 @@ class RplOF0(object):
                 else:
                     # no change on preferred parent
                     new_parent = self.preferred_parent
+            '''
 
         if (
                 (new_parent is not None)
