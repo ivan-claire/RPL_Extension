@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1df0b74f-a16e-4ed4-afcf-218048a24394" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MrHofSimulators/SimEngine/Connectivity.py" beforeDir="false" afterPath="$PROJECT_DIR$/MrHofSimulators/SimEngine/Connectivity.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/OrignalSimulator/SimEngine/Connectivity.py" beforeDir="false" afterPath="$PROJECT_DIR$/OrignalSimulator/SimEngine/Connectivity.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -28,8 +27,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/MrHofSimulators/SimEngine/Connectivity.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="300">
-              <caret line="556" column="48" selection-start-line="556" selection-start-column="48" selection-end-line="556" selection-end-column="48" />
+            <state relative-caret-position="30">
+              <caret line="538" column="45" selection-end-line="1011" />
               <folding>
                 <element signature="e#634#645#0" expanded="true" />
                 <element signature="e#1177#1380#0" />
@@ -47,10 +46,10 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/OrignalSimulator (copy)/SimEngine/Connectivity.py">
+        <entry file="file://$PROJECT_DIR$/OrignalSimulator/SimEngine/Connectivity.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="75">
-              <caret line="927" lean-forward="true" selection-start-line="927" selection-end-line="927" />
+            <state relative-caret-position="563">
+              <caret line="1011" lean-forward="true" selection-start-line="1011" selection-end-line="1011" />
               <folding>
                 <element signature="e#634#645#0" expanded="true" />
                 <element signature="e#1177#1380#0" />
@@ -163,7 +162,6 @@
       <list>
         <option value="$PROJECT_DIR$/OrignalSimulator/bin/pdrs.json" />
         <option value="$PROJECT_DIR$/OrignalSimulator/SimEngine/Mote/rpl.py" />
-        <option value="$PROJECT_DIR$/OrignalSimulator/SimEngine/Connectivity.py" />
         <option value="$PROJECT_DIR$/OrignalSimulator/SimEngine/Mote/app.py" />
         <option value="$PROJECT_DIR$/MrHofSimulators/SimEngine/Mote/app.py" />
         <option value="$PROJECT_DIR$/MrHofSimulators/bin/compute_kpis.py" />
@@ -174,6 +172,7 @@
         <option value="$PROJECT_DIR$/MrHofSimulators/bin/plot.py" />
         <option value="$PROJECT_DIR$/MrHofSimulators/SimEngine/Connectivity.py" />
         <option value="$PROJECT_DIR$/OrignalSimulator (copy)/SimEngine/Connectivity.py" />
+        <option value="$PROJECT_DIR$/OrignalSimulator/SimEngine/Connectivity.py" />
       </list>
     </option>
   </component>
@@ -200,18 +199,18 @@
             <path>
               <item name="RPL_Extension" type="b2602c69:ProjectViewProjectNode" />
               <item name="RPL_Extension" type="462c0819:PsiDirectoryNode" />
-              <item name="OrignalSimulator (copy)" type="462c0819:PsiDirectoryNode" />
+              <item name="OrignalSimulator" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="RPL_Extension" type="b2602c69:ProjectViewProjectNode" />
               <item name="RPL_Extension" type="462c0819:PsiDirectoryNode" />
-              <item name="OrignalSimulator (copy)" type="462c0819:PsiDirectoryNode" />
+              <item name="OrignalSimulator" type="462c0819:PsiDirectoryNode" />
               <item name="bin" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="RPL_Extension" type="b2602c69:ProjectViewProjectNode" />
               <item name="RPL_Extension" type="462c0819:PsiDirectoryNode" />
-              <item name="OrignalSimulator (copy)" type="462c0819:PsiDirectoryNode" />
+              <item name="OrignalSimulator" type="462c0819:PsiDirectoryNode" />
               <item name="SimEngine" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
@@ -526,21 +525,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/OrignalSimulator/SimEngine/Connectivity.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="173">
-          <caret line="977" column="26" lean-forward="true" selection-start-line="977" selection-start-column="26" selection-end-line="977" selection-end-column="26" />
-          <folding>
-            <element signature="e#634#645#0" expanded="true" />
-            <element signature="e#1888#2008#0" />
-            <element signature="e#2069#3309#0" />
-            <element signature="e#3342#3427#0" />
-            <element signature="e#16837#17426#0" />
-            <element signature="e#17474#18507#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/OrignalSimulator/bin/compute_kpis.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-7">
@@ -610,10 +594,29 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/OrignalSimulator (copy)/SimEngine/Connectivity.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="548">
+          <caret line="926" lean-forward="true" selection-start-line="926" selection-end-line="926" />
+          <folding>
+            <element signature="e#634#645#0" expanded="true" />
+            <element signature="e#1177#1380#0" />
+            <element signature="e#1418#15404#0" />
+            <element signature="e#1887#2007#0" />
+            <element signature="e#2068#3308#0" />
+            <element signature="e#3341#3426#0" />
+            <element signature="e#15459#15895#0" />
+            <element signature="e#15945#16788#0" />
+            <element signature="e#16836#17425#0" />
+            <element signature="e#17473#18506#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/MrHofSimulators/SimEngine/Connectivity.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="556" column="48" selection-start-line="556" selection-start-column="48" selection-end-line="556" selection-end-column="48" />
+        <state relative-caret-position="30">
+          <caret line="538" column="45" selection-end-line="1011" />
           <folding>
             <element signature="e#634#645#0" expanded="true" />
             <element signature="e#1177#1380#0" />
@@ -629,10 +632,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/OrignalSimulator (copy)/SimEngine/Connectivity.py">
+    <entry file="file://$PROJECT_DIR$/OrignalSimulator/SimEngine/Connectivity.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="927" lean-forward="true" selection-start-line="927" selection-end-line="927" />
+        <state relative-caret-position="563">
+          <caret line="1011" lean-forward="true" selection-start-line="1011" selection-end-line="1011" />
           <folding>
             <element signature="e#634#645#0" expanded="true" />
             <element signature="e#1177#1380#0" />

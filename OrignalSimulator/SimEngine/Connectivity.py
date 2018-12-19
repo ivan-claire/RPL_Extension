@@ -55,7 +55,7 @@ class ConnectivityBase(object):
     }
 
     CONNECTIVITY_MATRIX_LINK_QUALITY = {
-        'pdr' : 0.50,
+        'pdr' : 0.5,
         'rssi' : -30
     }
 
@@ -528,10 +528,10 @@ class ConnectivityTwoLevelTree(ConnectivityBase):
         second_relay = self.engine.motes[int(relay_size / 2)+1:-1]
 
         #initializing counters
-        counter1 = 0
-        counter2 = 1
-        counter3 = 1
-        counter4 = 0
+        counter1 = -1
+        counter2 = 0
+        counter3 = 0
+        counter4 = -1
 
         #print("FIRST RELAY TO CONNECT:: "+str(first_relay))
         #print("SECOND RELAY TO CONNECT:: " + str(second_relay))
@@ -547,6 +547,16 @@ class ConnectivityTwoLevelTree(ConnectivityBase):
                 )
 
         for node in first_relay :
+            counter2 += 1
+            counter3 += 1
+            counter1 += 1
+            counter4 += 1
+            if ( counter2 and counter3 == 5):
+                break
+            print("Ccounter1:: " + str(counter1) )
+            print("Ccounter2: " + str(counter2))
+            print("Ccounter3:: " + str(counter3) )
+            print("Ccounter4:: " + str(counter4))
             for channel in range(self.settings.phy_numChans):
                 # creating connection between relay 1 and relay 2 for odd and even numbers only
                 self.connectivity_matrix[first_relay[counter1].id][second_relay[counter2].id][channel] = copy.copy(
@@ -567,12 +577,10 @@ class ConnectivityTwoLevelTree(ConnectivityBase):
                 )
                 print(
                     "CONNECTING 2ND RELAY:: " + str(first_relay[counter3].id) + " ==" + str(second_relay[counter4].id))
+                print(
+                    "CONNECTING 2ND RELAY:: " + str(first_relay[counter3].id) + " ==" + str(second_relay[counter4].id))
 
-            if(counter2 and counter3 >= int(relay_size/2)-1):
-                counter2 += 1
-                counter3 += 1
-                counter1 += 1
-                counter4 += 1
+            #if(counter1 and counter2 and counter3 and counter4 <= int(relay_size/2)-1):
 
 
         for second_relay_node in second_relay:
