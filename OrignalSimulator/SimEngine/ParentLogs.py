@@ -56,7 +56,7 @@ LOG_RPL_DIS_TX                    = {'type': 'rpl.dis.tx',                'keys'
 LOG_RPL_DIS_RX                    = {'type': 'rpl.dis.rx',                'keys': ['_mote_id','packet']}
 LOG_RPL_NEIGHBORS                 = {'type': 'rpl.neighbors',             'keys': ['_mote_id','neighbors']}
 LOG_RPL_POSSIBLE_PARENTS          = {'type': 'rpl.parents',               'keys': ['_mote_id','possibleParents']}
-LOG_RPL_CHURN                     = {'type': 'rpl.churn',                 'keys': ['_mote_id','etx','rank','preferredParent','oldParent']}
+LOG_RPL_CHURN                     = {'type': 'rpl.churn',                 'keys': ['_mote_id','rank','preferredParent','oldParent']}
 LOG_RPL_LOCAL_REPAIR              = {'type': 'rpl.local_repair',          'keys': ['_mote_id']}
 
 # === 6LoWPAN

@@ -133,7 +133,6 @@ class Rpl(object):
             SimEngine.ParentLogs.LOG_RPL_CHURN,
             {
                 "_mote_id": self.mote.id,
-                "etx": self.of.etx,
                 "rank": self.of.rank,
                 "preferredParent": new_preferred,
                 "oldParent": old_preferred
