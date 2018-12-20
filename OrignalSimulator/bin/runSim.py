@@ -28,31 +28,34 @@ import json
 import glob
 import shutil
 
-from SimEngine import SimConfig,   \
-                      SimEngine,   \
-                      SimLog, \
-                      SimSettings, \
-                      Connectivity
+from SimEngine import SimConfig, \
+    SimEngine, \
+    SimLog, \
+    ParentLogs, \
+    SimSettings, \
+    Connectivity
+
 
 # =========================== helpers =========================================
 
 def parseCliParams():
-
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
         '--config',
-        dest       = 'config',
-        action     = 'store',
-        default    = 'config.json',
-        help       = 'Location of the configuration file.',
+        dest='config',
+        action='store',
+        default='config.json',
+        help='Location of the configuration file.',
     )
-    cliparams      = parser.parse_args()
+    cliparams = parser.parse_args()
     return cliparams.__dict__
+
 
 def getTemplogFileName(cpuID, pid):
     hostname = platform.uname()[1]
     return '{0}-pid{1}-cpu{2}.templog'.format(hostname, pid, cpuID)
+
 
 def printOrLog(cpuID, pid, output, verbose):
     assert cpuID is not None
@@ -63,27 +66,28 @@ def printOrLog(cpuID, pid, output, verbose):
     else:
         print(output)
 
+
 def runSimCombinations(params):
     """
     Runs simulations for all combinations of simulation settings.
     This function may run independently on different CPUs.
     """
 
-    cpuID              = params['cpuID']
-    pid                = params['pid']
-    numRuns            = params['numRuns']
-    first_run          = params['first_run']
-    verbose            = params['verbose']
-    config_data        = params['config_data']
+    cpuID = params['cpuID']
+    pid = params['pid']
+    numRuns = params['numRuns']
+    first_run = params['first_run']
+    verbose = params['verbose']
+    config_data = params['config_data']
 
     simconfig = SimConfig.SimConfig(configdata=config_data)
 
     # record simulation start time
-    simStartTime        = time.time()
+    simStartTime = time.time()
 
     # compute all the simulation parameter combinations
-    combinationKeys     = simconfig.settings.combination.keys()
-    simParams           = []
+    combinationKeys = simconfig.settings.combination.keys()
+    simParams = []
     for p in itertools.product(*[simconfig.settings.combination[k] for k in combinationKeys]):
         simParam = {}
         for (k, v) in zip(combinationKeys, p):
@@ -91,31 +95,32 @@ def runSimCombinations(params):
         for (k, v) in simconfig.settings.regular.items():
             if k not in simParam:
                 simParam[k] = v
-        simParams      += [simParam]
+        simParams += [simParam]
 
     # run a simulation for each set of simParams
     for (simParamNum, simParam) in enumerate(simParams):
 
         # run the simulation runs
-        for run_id in range(first_run, first_run+numRuns):
-
+        for run_id in range(first_run, first_run + numRuns):
             # printOrLog
-            output  = 'parameters {0}/{1}, run {2}/{3}'.format(
-               simParamNum+1,
-               len(simParams),
-               run_id+1-first_run,
-               numRuns
+            output = 'parameters {0}/{1}, run {2}/{3}'.format(
+                simParamNum + 1,
+                len(simParams),
+                run_id + 1 - first_run,
+                numRuns
             )
             printOrLog(cpuID, pid, output, verbose)
 
             # create singletons
-            settings         = SimSettings.SimSettings(cpuID=cpuID, run_id=run_id, **simParam)
+            settings = SimSettings.SimSettings(cpuID=cpuID, run_id=run_id, **simParam)
             settings.setLogDirectory(simconfig.get_log_directory_name())
             settings.setCombinationKeys(combinationKeys)
-            simlog           = SimLog.SimLog()
+            simlog = SimLog.SimLog()
             simlog.set_log_filters(simconfig.logging)
-            simengine        = SimEngine.SimEngine(run_id=run_id, verbose=verbose)
 
+            parentlog = ParentLogs.ParentLogs()
+            parentlog.set_log_filters(simconfig.logging)
+            simengine = SimEngine.SimEngine(run_id=run_id, verbose=verbose)
 
             # start simulation run
             simengine.start()
@@ -125,23 +130,27 @@ def runSimCombinations(params):
 
             # destroy singletons
             simlog.destroy()
+            # parentlog.destroy()
             simengine.destroy()
             Connectivity.Connectivity().destroy()
-            settings.destroy() # destroy last, Connectivity needs it
+            settings.destroy()  # destroy last, Connectivity needs it
 
         # printOrLog
-        output  = 'simulation ended after {0:.0f}s ({1} runs).'.format(
-            time.time()-simStartTime,
+        output = 'simulation ended after {0:.0f}s ({1} runs).'.format(
+            time.time() - simStartTime,
             numRuns * len(simParams)
         )
         printOrLog(cpuID, pid, output, verbose)
 
-#keep_printing_progress = True
+
+# keep_printing_progress = True
 keep_printing_progress = False
+
+
 def printProgressPerCpu(cpuIDs, pid, clear_console=True):
     while keep_printing_progress:
         time.sleep(1)
-        output     = []
+        output = []
         for cpuID in cpuIDs:
             try:
                 with open(getTemplogFileName(cpuID, pid), 'r') as f:
@@ -158,6 +167,7 @@ def printProgressPerCpu(cpuIDs, pid, clear_console=True):
         print(output)
         if allDone:
             break
+
 
 def merge_output_files(folder_path):
     """
@@ -187,12 +197,12 @@ def merge_output_files(folder_path):
                     outputfile.write(inputfile.read())
         shutil.rmtree(os.path.join(folder_path, subfolder))
 
+
 # =========================== main ============================================
 
 def main():
-    
-    #=== initialize
-    
+    # === initialize
+
     # cli params
     cliparams = parseCliParams()
 
@@ -200,7 +210,7 @@ def main():
     simconfig = SimConfig.SimConfig(configfile=cliparams['config'])
     assert simconfig.version == 0
 
-    #=== run simulations
+    # === run simulations
 
     # decide number of CPUs to run on
     multiprocessing.freeze_support()
@@ -215,25 +225,25 @@ def main():
         # run on single CPU
 
         runSimCombinations({
-            'cpuID':              0,
-            'pid':                os.getpid(),
-            'numRuns':            simconfig.execution.numRuns,
-            'first_run':          0,
-            'verbose':            True,
-            'config_data':        simconfig.get_config_data()
+            'cpuID': 0,
+            'pid': os.getpid(),
+            'numRuns': simconfig.execution.numRuns,
+            'first_run': 0,
+            'verbose': True,
+            'config_data': simconfig.get_config_data()
         })
 
     else:
         # distribute runs on different CPUs
         runsPerCPU = [
-            int(
-                math.floor(float(simconfig.execution.numRuns) / float(numCPUs))
-            )
-        ]*numCPUs
-        idx         = 0
+                         int(
+                             math.floor(float(simconfig.execution.numRuns) / float(numCPUs))
+                         )
+                     ] * numCPUs
+        idx = 0
         while sum(runsPerCPU) < simconfig.execution.numRuns:
             runsPerCPU[idx] += 1
-            idx              += 1
+            idx += 1
 
         # distribute run ids on different CPUs (transform runsPerCPU into a list of tuples)
         first_run = 0
@@ -243,7 +253,7 @@ def main():
             first_run += runs
 
         # print progress, wait until done
-        cpuIDs                = [i for i in range(numCPUs)]
+        cpuIDs = [i for i in range(numCPUs)]
         if simconfig.log_directory_name == 'hostname':
             # We assume the simulator run over a cluster system when
             # 'log_directory_name' is 'hostname'. Under a cluster system, we
@@ -253,8 +263,8 @@ def main():
         else:
             clear_console = True
         print_progress_thread = threading.Thread(
-            target = printProgressPerCpu,
-            args   = (cpuIDs, os.getpid(), clear_console)
+            target=printProgressPerCpu,
+            args=(cpuIDs, os.getpid(), clear_console)
         )
 
         print_progress_thread.start()
@@ -269,12 +279,12 @@ def main():
             runSimCombinations,
             [
                 {
-                    'cpuID':              cpuID,
-                    'pid':                os.getpid(),
-                    'numRuns':            runs,
-                    'first_run':          first_run,
-                    'verbose':            False,
-                    'config_data':        simconfig.get_config_data()
+                    'cpuID': cpuID,
+                    'pid': os.getpid(),
+                    'numRuns': runs,
+                    'first_run': first_run,
+                    'verbose': False,
+                    'config_data': simconfig.get_config_data()
                 } for [cpuID, (runs, first_run)] in enumerate(runsPerCPU)
             ]
         )
@@ -304,7 +314,7 @@ def main():
     with open(os.path.join(folder_path, 'config.json'), 'w') as f:
         f.write(simconfig.get_config_data())
 
-    #=== post-simulation actions
+    # === post-simulation actions
 
     if simconfig.log_directory_name == 'hostname':
         # We assume the simulator run over a cluster system when
@@ -316,7 +326,8 @@ def main():
         for c in simconfig.post:
             print('calling "{0}"').format(c)
             rc = subprocess.call(c, shell=True)
-            assert rc==0
+            assert rc == 0
+
 
 if __name__ == '__main__':
     main()

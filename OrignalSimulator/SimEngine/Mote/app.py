@@ -46,7 +46,8 @@ class AppBase(object):
         self.engine     = SimEngine.SimEngine.SimEngine()
         self.settings   = SimEngine.SimSettings.SimSettings()
         self.log        = SimEngine.SimLog.SimLog().log
-        
+        self.logs       = SimEngine.ParentLogs.ParentLogs().logs
+
         # local variables
         self.appcounter = 0
 
@@ -72,6 +73,14 @@ class AppBase(object):
             }
         )
 
+        self.logs(
+            SimEngine.ParentLogs.LOG_APP_RX,
+            {
+                '_mote_id': self.mote.id,
+                'packet': packet
+            }
+        )
+
     #======================== private ==========================================
 
     def _generate_packet(
@@ -80,7 +89,7 @@ class AppBase(object):
             packet_type,
             packet_length,
         ):
-        
+
         # create data packet
         dataPacket = {
             'type':              packet_type,
@@ -101,18 +110,18 @@ class AppBase(object):
         return dataPacket
 
     def _send_packet(self, dstIp, packet_length):
-        
+
         # abort if I'm not ready to send DATA yet
         if self.mote.clear_to_send_EBs_DATA()==False:
             return
-        
+
         # create
         packet = self._generate_packet(
             dstIp          = dstIp,
             packet_type    = d.PKT_TYPE_DATA,
             packet_length  = packet_length
         )
-        
+
         # log
         self.log(
             SimEngine.SimLog.LOG_APP_TX,
@@ -121,7 +130,13 @@ class AppBase(object):
                 'packet':         packet,
             }
         )
-        
+        self.logs(
+            SimEngine.ParentLogs.LOG_APP_TX,
+            {
+                '_mote_id': self.mote.id,
+                'packet': packet
+            }
+        )
         # send
         self.mote.sixlowpan.sendPacket(packet)
 
@@ -152,9 +167,17 @@ class AppRoot(AppBase):
                 'packet'  : packet
             }
         )
+        self.logs(
+            SimEngine.ParentLogs.LOG_APP_RX,
+            {
+                '_mote_id': self.mote.id,
+                'packet': packet
+            }
+        )
+
 
     #======================== private ==========================================
-    
+
     def _send_ack(self, destination, packet_length=None):
 
         if packet_length is None:
@@ -183,17 +206,21 @@ class AppPeriodic(AppBase):
     #======================== public ==========================================
 
     def startSendingData(self):
+        print("Slotframes:", self.mote.tsch.slotframes)
+        print("TRANSMITTING ONLY WHEN MOTE ID IS 11: "+str(self.mote.id))
         if self.mote.id >= 11:
+            print("BEGINNNNNNNNNNNNNNNNIIIINGGGGGGGGGGG TRANSMISSSSSSSSSIONNNNNNN WITH ID:::::: " + str(self.mote.id))
             if self.sending_first_packet:
                 self._schedule_transmission()
 
         #if self.sending_first_packet:
-          #  self._schedule_transmission()
+         #   self._schedule_transmission()
 
     #======================== public ==========================================
 
     def _schedule_transmission(self):
         assert self.settings.app_pkPeriod >= 0
+        print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXSCHEDULING TRANSMISIIONNSSSSSSXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
         if self.settings.app_pkPeriod == 0:
             return
 

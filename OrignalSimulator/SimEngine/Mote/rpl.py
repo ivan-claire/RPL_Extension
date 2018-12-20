@@ -47,6 +47,7 @@ class Rpl(object):
         self.engine                    = SimEngine.SimEngine.SimEngine()
         self.settings                  = SimEngine.SimSettings.SimSettings()
         self.log                       = SimEngine.SimLog.SimLog().log
+        self.logs                      = SimEngine.ParentLogs.ParentLogs().logs
 
         # local variables
         self.dodagId                   = None
@@ -125,6 +126,17 @@ class Rpl(object):
                 "_mote_id":        self.mote.id,
                 "rank":            self.of.rank,
                 "preferredParent": new_preferred
+            }
+        )
+
+        self.logs(
+            SimEngine.ParentLogs.LOG_RPL_CHURN,
+            {
+                "_mote_id": self.mote.id,
+                "etx": self.of.etx,
+                "rank": self.of.rank,
+                "preferredParent": new_preferred,
+                "oldParent": old_preferred
             }
         )
 
@@ -433,6 +445,22 @@ class Rpl(object):
             }
         )
 
+        self.logs(
+            SimEngine.ParentLogs.LOG_RPL_NEIGHBORS,
+            {
+                "_mote_id": self.mote.id,
+                "neighbors": self.of.neighbors,
+            }
+        )
+
+        self.logs(
+            SimEngine.ParentLogs.LOG_RPL_POSSIBLE_PARENTS,
+            {
+                "_mote_id": self.mote.id,
+                "possibleParents": self.of.possible_parents,
+            }
+        )
+
         # remove other possible DAOs from the queue
         self.mote.tsch.remove_packets_in_tx_queue(type=d.PKT_TYPE_DAO)
 
@@ -492,6 +520,8 @@ class RplOFNone(object):
         self.rpl = rpl
         self.rank = None
         self.preferred_parent = None
+        self.possible_parents = None
+        self.all_neighbors = None
 
     def update(self, dio):
         # do nothing on the root
@@ -509,6 +539,13 @@ class RplOFNone(object):
     def update_etx(self, cell, mac_addr, isACKed):
         # do nothing
         pass
+
+    def set_neighbors(self, neighbors):
+        self.all_neighbors = neighbors
+
+    def set_possible_parents(self, possible_parents):
+        self.possible_parents = possible_parents
+
 
 class RplOF0(object):
 
@@ -537,6 +574,7 @@ class RplOF0(object):
         self.neighbors = []
         self.rank = None
         self.preferred_parent = None
+        self.possible_parents = []
 
     @property
     def parents(self):
@@ -545,6 +583,8 @@ class RplOF0(object):
         #    "MinHopRankIncrease is the minimum increase in Rank between a node
         #     and any of its DODAG parents."
         _parents = []
+        print(" NEIGHBOURSSSSSSS.... \n" + str(self.neighbors))
+        # FINDING OUT IF NEIGHBOUR IS FIT TO BE IN LIST OF POSSIBLE PARENTS
         for neighbor in self.neighbors:
             if self._calculate_rank(neighbor) is None:
                 # skip this one
@@ -554,12 +594,15 @@ class RplOF0(object):
                     (self.rank is None)
                     or
                     (
-                        d.RPL_MINHOPRANKINCREASE <=
-                        self.rank - neighbor['advertised_rank']
+                            d.RPL_MINHOPRANKINCREASE <=
+                            self.rank - neighbor['advertised_rank']
                     )
-                ):
+            ):
                 _parents.append(neighbor)
-        print("LIST OF POSSIBLE PARENTS....n" + str(_parents))
+            print(" LIST OF POSSIBLE PARENTS....\n" + str(_parents))
+            # LOG_RPL_POSSIBLE_PARENTS
+        self.possible_parents = _parents
+
         return _parents
 
     def update(self, dio):

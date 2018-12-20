@@ -16,6 +16,7 @@ import json
 import Mote
 import SimSettings
 import SimLog
+import ParentLogs
 import Connectivity
 import SimConfig
 
@@ -24,7 +25,7 @@ import SimConfig
 # =========================== body ============================================
 
 class DiscreteEventEngine(threading.Thread):
-    
+
     #===== start singleton
     _instance      = None
     _init          = False
@@ -43,7 +44,7 @@ class DiscreteEventEngine(threading.Thread):
             return
         cls._init = True
         #===== singleton
-        
+
         try:
             # store params
             self.cpuID                          = cpuID
@@ -66,7 +67,7 @@ class DiscreteEventEngine(threading.Thread):
             self.name                           = 'DiscreteEventEngine'
         except:
             # an exception happened when initializing the instance
-            
+
             # destroy the singleton
             cls._instance         = None
             cls._init             = False
@@ -75,7 +76,7 @@ class DiscreteEventEngine(threading.Thread):
     def destroy(self):
         if self._Thread__initialized:
             # initialization finished without exception
-            
+
             if self.is_alive():
                 # thread is start'ed
                 self.play()           # cause one more loop in thread
@@ -83,7 +84,7 @@ class DiscreteEventEngine(threading.Thread):
                 self.join()           # wait until thread is dead
             else:
                 # thread NOT start'ed yet, or crashed
-                
+
                 # destroy the singleton
                 cls = type(self)
                 cls._instance         = None
@@ -104,19 +105,19 @@ class DiscreteEventEngine(threading.Thread):
             while self.goOn:
 
                 with self.dataLock:
-                    
+
                     # abort simulation when no more events
                     if not self.events:
                         break
-                    
+
                     # make sure we are in the future
                     (a, b, cb, c) = self.events[0]
                     if c[1] != '_actionPauseSim':
                         assert self.events[0][0] >= self.asn
-                    
+
                     # update the current ASN
                     self.asn = self.events[0][0]
-                    
+
                     # find callbacks for this ASN
                     cbs = []
                     while True:
@@ -124,21 +125,21 @@ class DiscreteEventEngine(threading.Thread):
                             break
                         (_, _, cb, _) = self.events.pop(0)
                         cbs += [cb]
-                        
+
                 # call the callbacks (outside the dataLock)
-                
+
                 for cb in cbs:
                     cb()
 
         except Exception as e:
             # thread crashed
-            
+
             # record the exception
             self.exc = e
-            
+
             # additional routine
             self._routine_thread_crashed()
-            
+
             # print
             output  = []
             output += ['']
@@ -172,18 +173,19 @@ class DiscreteEventEngine(threading.Thread):
 
             # flush all the buffered log data
             SimLog.SimLog().flush()
+            ParentLogs.ParentLogs().flush()
 
         else:
             # thread ended (gracefully)
-            
+
             # no exception
             self.exc = None
-            
+
             # additional routine
             self._routine_thread_ended()
-            
+
         finally:
-            
+
             # destroy this singleton
             cls = type(self)
             cls._instance                      = None
@@ -195,7 +197,7 @@ class DiscreteEventEngine(threading.Thread):
             raise self.exc
 
     #======================== public ==========================================
-    
+
     # === getters/setters
 
     def getAsn(self):
@@ -206,9 +208,9 @@ class DiscreteEventEngine(threading.Thread):
             if mote.is_my_mac_addr(mac_addr):
                 return mote
         return None
-    
+
     #=== scheduling
-    
+
     def scheduleAtAsn(self, asn, cb, uniqueTag, intraSlotOrder):
         """
         Schedule an event at a particular ASN in the future.
@@ -230,7 +232,7 @@ class DiscreteEventEngine(threading.Thread):
 
             # add to schedule
             self.events.insert(i, (asn, intraSlotOrder, cb, uniqueTag))
-    
+
     def scheduleIn(self, delay, cb, uniqueTag, intraSlotOrder):
         """
         Schedule an event 'delay' seconds into the future.
@@ -308,26 +310,26 @@ class DiscreteEventEngine(threading.Thread):
             uniqueTag        = ('DiscreteEventEngine', '_actionEndSlotframe'),
             intraSlotOrder   = Mote.MoteDefines.INTRASLOTORDER_ADMINTASKS,
         )
-    
+
     # ======================== abstract =======================================
-    
+
     def _init_additional_local_variables(self):
         pass
-    
+
     def _routine_thread_started(self):
         pass
-    
+
     def _routine_thread_crashed(self):
         pass
-    
+
     def _routine_thread_ended(self):
         pass
 
 
 class SimEngine(DiscreteEventEngine):
-    
+
     DAGROOT_ID = 0
-    
+
     def _init_additional_local_variables(self):
         self.settings                   = SimSettings.SimSettings()
 
@@ -353,7 +355,9 @@ class SimEngine(DiscreteEventEngine):
         self.motes                      = [Mote.Mote.Mote(m) for m in range(self.settings.exec_numMotes)]
         self.connectivity               = Connectivity.Connectivity()
         self.log                        = SimLog.SimLog().log
+        self.logs                       = ParentLogs.ParentLogs().logs
         SimLog.SimLog().set_simengine(self)
+        ParentLogs.ParentLogs().set_simengine(self)
 
         # log the random seed
         self.log(
@@ -362,19 +366,20 @@ class SimEngine(DiscreteEventEngine):
                 'value': self.random_seed
             }
         )
+
         # flush buffered logs, which are supposed to be 'config' and
         # 'random_seed' lines, right now. This could help, for instance, when a
         # simulation is stuck by an infinite loop without writing these
         # 'config' and 'random_seed' to a log file.
         SimLog.SimLog().flush()
-        
+        ParentLogs.ParentLogs().flush()
         # select dagRoot
         self.motes[self.DAGROOT_ID].setDagRoot()
 
         # boot all motes
         for i in range(len(self.motes)):
             self.motes[i].boot()
-    
+
     def _routine_thread_started(self):
         # log
         self.log(
@@ -382,6 +387,14 @@ class SimEngine(DiscreteEventEngine):
             {
                 "name":   self.name,
                 "state":  "started"
+            }
+        )
+
+        self.logs(
+            ParentLogs.LOG_SIMULATOR_STATE,
+            {
+                "name": self.name,
+                "state": "started"
             }
         )
         

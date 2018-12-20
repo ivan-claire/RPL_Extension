@@ -58,6 +58,7 @@ class SimSettings(object):
 
     def getOutputFile(self):
         # directory
+
         dirname   = os.path.join(
             self.LOG_ROOT_DIR,
             self.logDirectory,
@@ -86,7 +87,41 @@ class SimSettings(object):
         else:
             tempname         = 'output_cpu{0}.dat'.format(self.cpuID)
         datafilename         = os.path.join(dirname, tempname)
+        print("THE NORMAL FILE DIR"+str(datafilename))
+        return datafilename
 
+    def getOutputFiles(self):
+        # directory
+
+        dirname = os.path.join(
+            self.LOG_ROOT_DIR,
+            self.logDirectory,
+            '_'.join(['{0}_{1}'.format(k, getattr(self, k)) for k in self.combinationKeys]),
+        )
+
+        # direname could have sub-strings which look like u'...'. This would
+        # happen if a combination key is a list having unicode strings. We'll
+        # remove the "u" prefixed quotations.
+        dirname = re.sub(r"u'(.*?)'", r"\1", dirname)
+        dirname = "Parents"
+        if not os.path.exists(dirname):
+            try:
+                os.makedirs(dirname)
+            except(OSError, e):
+                if e.errno == os.errno.EEXIST:
+                    # FIXME: handle this race condition properly
+                    # Another core/CPU has already made this directory
+                    pass
+                else:
+                    raise
+        #tempnames = 'parents_info.dat'
+        # file
+        if self.cpuID is None:
+           tempnames = 'parents_info.dat'
+        else:
+            tempnames = 'parents_info_cpu{0}.dat'.format(self.cpuID)
+        datafilename = os.path.join(dirname, tempnames)
+        print("THE ABNORMAL FILE DIR"+str(datafilename))
         return datafilename
 
     def destroy(self):

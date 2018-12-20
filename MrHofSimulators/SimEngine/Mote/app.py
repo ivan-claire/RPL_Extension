@@ -46,6 +46,7 @@ class AppBase(object):
         self.engine     = SimEngine.SimEngine.SimEngine()
         self.settings   = SimEngine.SimSettings.SimSettings()
         self.log        = SimEngine.SimLog.SimLog().log
+        self.logs       = SimEngine.ParentLogs.ParentLogs().logs
         
         # local variables
         self.appcounter = 0
@@ -69,6 +70,14 @@ class AppBase(object):
             {
                 '_mote_id': self.mote.id,
                 'packet'  : packet
+            }
+        )
+
+        self.logs(
+            SimEngine.ParentLogs.LOG_APP_RX,
+            {
+                '_mote_id': self.mote.id,
+                'packet': packet
             }
         )
 
@@ -121,7 +130,13 @@ class AppBase(object):
                 'packet':         packet,
             }
         )
-        
+        self.logs(
+            SimEngine.ParentLogs.LOG_APP_TX,
+            {
+                '_mote_id': self.mote.id,
+                'packet': packet
+            }
+        )
         # send
         self.mote.sixlowpan.sendPacket(packet)
 
@@ -152,6 +167,14 @@ class AppRoot(AppBase):
                 'packet'  : packet
             }
         )
+        self.logs(
+            SimEngine.ParentLogs.LOG_APP_RX,
+            {
+                '_mote_id': self.mote.id,
+                'packet': packet
+            }
+        )
+
 
     #======================== private ==========================================
     

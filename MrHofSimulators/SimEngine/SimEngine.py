@@ -16,6 +16,7 @@ import json
 import Mote
 import SimSettings
 import SimLog
+import ParentLogs
 import Connectivity
 import SimConfig
 
@@ -172,6 +173,7 @@ class DiscreteEventEngine(threading.Thread):
 
             # flush all the buffered log data
             SimLog.SimLog().flush()
+            ParentLogs.ParentLogs().flush()
 
         else:
             # thread ended (gracefully)
@@ -353,7 +355,9 @@ class SimEngine(DiscreteEventEngine):
         self.motes                      = [Mote.Mote.Mote(m) for m in range(self.settings.exec_numMotes)]
         self.connectivity               = Connectivity.Connectivity()
         self.log                        = SimLog.SimLog().log
+        self.logs                       = ParentLogs.ParentLogs().logs
         SimLog.SimLog().set_simengine(self)
+        ParentLogs.ParentLogs().set_simengine(self)
 
         # log the random seed
         self.log(
@@ -362,12 +366,13 @@ class SimEngine(DiscreteEventEngine):
                 'value': self.random_seed
             }
         )
+
         # flush buffered logs, which are supposed to be 'config' and
         # 'random_seed' lines, right now. This could help, for instance, when a
         # simulation is stuck by an infinite loop without writing these
         # 'config' and 'random_seed' to a log file.
         SimLog.SimLog().flush()
-        
+        ParentLogs.ParentLogs().flush()
         # select dagRoot
         self.motes[self.DAGROOT_ID].setDagRoot()
 
@@ -382,6 +387,14 @@ class SimEngine(DiscreteEventEngine):
             {
                 "name":   self.name,
                 "state":  "started"
+            }
+        )
+
+        self.logs(
+            ParentLogs.LOG_SIMULATOR_STATE,
+            {
+                "name": self.name,
+                "state": "started"
             }
         )
         

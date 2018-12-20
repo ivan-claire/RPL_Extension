@@ -31,6 +31,7 @@ import shutil
 from SimEngine import SimConfig,   \
                       SimEngine,   \
                       SimLog, \
+                      ParentLogs, \
                       SimSettings, \
                       Connectivity
 
@@ -114,6 +115,9 @@ def runSimCombinations(params):
             settings.setCombinationKeys(combinationKeys)
             simlog           = SimLog.SimLog()
             simlog.set_log_filters(simconfig.logging)
+
+            parentlog = ParentLogs.ParentLogs()
+            parentlog.set_log_filters(simconfig.logging)
             simengine        = SimEngine.SimEngine(run_id=run_id, verbose=verbose)
 
 
@@ -125,6 +129,7 @@ def runSimCombinations(params):
 
             # destroy singletons
             simlog.destroy()
+            #parentlog.destroy()
             simengine.destroy()
             Connectivity.Connectivity().destroy()
             settings.destroy() # destroy last, Connectivity needs it

@@ -136,6 +136,18 @@ def  save_pdrs(data,subfolder, total_num_motes):
     outer_list = []
     print("ALL SIMULATIONS::: " + str( data ))
 
+    with io.open("pdrs.json", 'w', encoding='utf-8') as feedsjson:
+        # convert it to a python dictionary
+        json_dict = json.loads(json_string)
+
+        for pdr in data:
+            print("PDRRSSS::: " + str(pdr))
+            json_dict['simulations'].append({mote_counter: pdr})
+            mote_counter -= 1
+        outer_list.append(json_dict)
+        feedsjson.write(json.dumps(json_dict, ensure_ascii=False))
+
+    '''
     if os.path.isfile("./pdrs.json") == False:
         with io.open("pdrs.json", 'w', encoding='utf-8') as feedsjson:
             # convert it to a python dictionary
@@ -162,6 +174,7 @@ def  save_pdrs(data,subfolder, total_num_motes):
             #feedsjson.write(json.dumps(json_dict, indent = 4, sort_keys = True,
             # separators = ( ',', ': '), ensure_ascii = False))
             #feedsjson.write(unicode(json_end))
+      '''
 
     with open('pdrs.json', 'r') as handle:
         text_data = handle.read()

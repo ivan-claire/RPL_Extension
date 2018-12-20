@@ -50,6 +50,7 @@ class Rpl(object):
         self.engine                    = SimEngine.SimEngine.SimEngine()
         self.settings                  = SimEngine.SimSettings.SimSettings()
         self.log                       = SimEngine.SimLog.SimLog().log
+        self.logs                      = SimEngine.ParentLogs.ParentLogs().logs
 
         # local variables
         self.dodagId                   = None
@@ -70,6 +71,11 @@ class Rpl(object):
     #======================== public ==========================================
 
     # getters/setters
+    def get_neighbors(self):
+        return self.of.neighbors
+
+    def get_possible_parents(self):
+        return self.of.possible_parents
 
     def get_rank(self):
         return self.of.rank
@@ -134,6 +140,18 @@ class Rpl(object):
                 "etx":             self.of.etx,
                 "rank":            self.of.rank,
                 "preferredParent": new_preferred
+
+            }
+        )
+
+        self.logs(
+            SimEngine.ParentLogs.LOG_RPL_CHURN,
+            {
+                "_mote_id": self.mote.id,
+                "etx": self.of.etx,
+                "rank": self.of.rank,
+                "preferredParent": new_preferred,
+                "oldParent": old_preferred
             }
         )
 
@@ -260,6 +278,14 @@ class Rpl(object):
             }
         )
 
+        #self.logs(
+        #    SimEngine.ParentLogs.LOG_RPL_DIO_TX,
+        #    {
+          #      "_mote_id": self.mote.id,
+         #       "packet": dio,
+          #  }
+        #)
+
         self.mote.sixlowpan.sendPacket(dio)
         
     
@@ -329,6 +355,14 @@ class Rpl(object):
                 "packet":    packet,
             }
         )
+
+        #self.logs(
+          #  SimEngine.ParentLogs.LOG_RPL_DIO_RX,
+          #  {
+          #      "_mote_id": self.mote.id,
+          #      "packet": packet,
+          #  }
+       # )
 
         # handle the infinite rank
         if packet['app']['rank'] == d.RPL_INFINITE_RANK:
@@ -454,6 +488,22 @@ class Rpl(object):
                 "packet":   newDAO,
             }
         )
+        self.logs(
+            SimEngine.ParentLogs.LOG_RPL_NEIGHBORS,
+            {
+                "_mote_id": self.mote.id,
+                "neighbors": self.of.neighbors,
+            }
+        )
+
+        self.logs(
+            SimEngine.ParentLogs.LOG_RPL_POSSIBLE_PARENTS,
+            {
+                "_mote_id": self.mote.id,
+                "possibleParents": self.of.possible_parents,
+            }
+        )
+
 
         # remove other possible DAOs from the queue
         self.mote.tsch.remove_packets_in_tx_queue(type=d.PKT_TYPE_DAO)
@@ -516,6 +566,8 @@ class RplMrHofNone(Rpl):
         self.rank = None
         self.etx = None
         self.preferred_parent = None
+        self.possible_parents = None
+        self.all_neighbors = None
 
     def update(self, dio):
         # do nothing on the root
@@ -526,6 +578,12 @@ class RplMrHofNone(Rpl):
         
     def set_etx(self, new_etx):
         self.etx = new_etx
+
+    def set_neighbors(self, neighbors):
+        self.all_neighbors = neighbors
+
+    def set_possible_parents(self, possible_parents):
+        self.possible_parents = possible_parents
 
     def set_preferred_parent(self, new_preferred_parent):
         self.preferred_parent = new_preferred_parent
@@ -565,6 +623,7 @@ class RplMrHof(Rpl):
         self.rank = None          # rank and etx values to be used for updating dio
         self.etx = None
         self.preferred_parent = None
+        self.possible_parents = []
 
     @property
     def parents(self):
@@ -573,7 +632,8 @@ class RplMrHof(Rpl):
         #    "MinHopRankIncrease is the minimum increase in Rank between a node
         #     and any of its DODAG parents."
         _parents = []
-        
+
+        print(" NEIGHBOURSSSSSSS.... \n" + str(self.neighbors))
         # FINDING OUT IF NEIGHBOUR IS FIT TO BE IN LIST OF POSSIBLE PARENTS
         for neighbor in self.neighbors:
             if self._calculate_rank(neighbor) is None:
@@ -589,7 +649,9 @@ class RplMrHof(Rpl):
                     )
                 ):
                 _parents.append(neighbor)
-            #print("LIST OF POSSIBLE PARENTS....n"+str(_parents))
+            print(" LIST OF POSSIBLE PARENTS....\n"+str(_parents))
+            #LOG_RPL_POSSIBLE_PARENTS
+        self.possible_parents = _parents
         return _parents
 
     def update(self, dio):
