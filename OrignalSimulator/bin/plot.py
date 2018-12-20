@@ -236,7 +236,8 @@ def  save_pdrs(data,subfolder, total_num_motes):
         print("ALL MOTES DATA::: " + str(filter_zero_pdrs))
         if filter_zero_pdrs != []:
             plt.boxplot(filter_zero_pdrs, showmeans=True)
-            plt.xticks(x, total_num_motes)
+            #plt.xticks(x, total_num_motes)
+            plt.ylabel("PDR-OF0")
             savefig(subfolder, "Means of all motes")
             plt.clf()
             #plt.boxplot(avg_pdr_per_mote, showmeans=True)
