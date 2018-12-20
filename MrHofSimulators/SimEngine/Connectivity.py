@@ -54,10 +54,7 @@ class ConnectivityBase(object):
         'rssi': -1000
     }
 
-    CONNECTIVITY_MATRIX_LINK_QUALITY = {
-        'pdr' : 0.5,
-        'rssi' : -30
-    }
+    CONNECTIVITY_MATRIX_LINK_QUALITY = {'pdr' : 0.5, 'rssi' : -30}
 
     CONNECTIVITY_MATRIX_LINK_QUALITY_1 = {
         'pdr': 0.3,
@@ -587,10 +584,10 @@ class ConnectivityTwoLevelTree(ConnectivityBase):
             for channel in range(self.settings.phy_numChans):
                 # Connect the tail node to the second relay
                 self.connectivity_matrix[tail.id][second_relay_node.id][channel] = copy.copy(
-                    self.CONNECTIVITY_MATRIX_LINK_QUALITY_1
+                    self.CONNECTIVITY_MATRIX_LINK_QUALITY
                 )
                 self.connectivity_matrix[second_relay_node.id][tail.id][channel] = copy.copy(
-                    self.CONNECTIVITY_MATRIX_LINK_QUALITY_1
+                    self.CONNECTIVITY_MATRIX_LINK_QUALITY
                 )
                 print(
                     "CONNECTING TAIL:: " + str(tail.id) + " ==" + str(second_relay_node.id))

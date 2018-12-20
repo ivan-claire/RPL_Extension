@@ -25,7 +25,7 @@ import re
 import numpy as np
 from collections import defaultdict
 import collections
-from blist import sorteddict
+#from blist import sorteddict
 # ============================ defines ========================================
 
 KPIS = [
@@ -242,6 +242,13 @@ def  save_pdrs(data,subfolder, total_num_motes):
             #plt.boxplot(avg_pdr_per_mote, showmeans=True)
             #savefig(subfolder, "Means of all motes")
             #plt.clf()
+
+            mean_pdr = np.mean(filter_zero_pdrs)
+            print("mean pdr of all modes: ", mean_pdr)
+            complete_name = os.path.join("./pdr_value/", "mean_pdr.txt")
+            file = open(complete_name, "w+")
+            file.write(str(mean_pdr))
+            file.close()
 
 def combine(dictionaries):
     combined_dict = {}
